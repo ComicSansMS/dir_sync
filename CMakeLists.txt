@@ -32,11 +32,15 @@ set(DIR_SYNC_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
 set(DIR_SYNC_SOURCE_FILES
     ${DIR_SYNC_SOURCE_DIR}/main.cpp
     ${DIR_SYNC_SOURCE_DIR}/config.cpp
+    ${DIR_SYNC_SOURCE_DIR}/dir_tree.cpp
+    ${DIR_SYNC_SOURCE_DIR}/thread_pool.cpp
 )
 
 set(DIR_SYNC_HEADER_FILES
     ${DIR_SYNC_SOURCE_DIR}/config.hpp
+    ${DIR_SYNC_SOURCE_DIR}/dir_tree.hpp
     ${DIR_SYNC_SOURCE_DIR}/exceptions.hpp
+    ${DIR_SYNC_SOURCE_DIR}/thread_pool.hpp
 )
 
 set(DIR_SYNC_UI_DIR ${PROJECT_SOURCE_DIR}/src/ui)

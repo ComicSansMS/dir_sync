@@ -2,14 +2,19 @@
 #define DIR_SYNC_INCLUDE_GUARD_UI_MAIN_WINDOW_HPP
 
 #include <config.hpp>
+#include <dir_tree.hpp>
+#include <thread_pool.hpp>
 
 #include <QMainWindow>
 
 #include <QBoxLayout>
 #include <QCheckBox>
+#include <QLabel>
 #include <QLineEdit>
+#include <QProgressBar>
 #include <QPushButton>
 #include <QStackedWidget>
+
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -36,6 +41,23 @@ private:
         DirPicker(MainWindow* parent);
     } m_dirPicker;
 
+    struct Scanner {
+        QWidget* widget;
+        QVBoxLayout* layout;
+        QLabel* labelHeader;
+        QProgressBar* progress;
+        QLabel* label1;
+        QLabel* label2;
+        QPushButton* cancelButton;
+
+        CancellationTokenPtr cancelScan[2];
+        std::future<Directory> scanResult[2];
+        int scanFinishedCount;
+
+        Scanner(MainWindow* parent);
+    } m_scanner;
+
+    ThreadPool m_threadPool;
 public:
     MainWindow(Config const& cfg);
 
@@ -45,6 +67,15 @@ public slots:
     void serializeConfig() const;
 
     void initiateScan();
+    void cancelScanning();
+    void finishedScanning();
+
+signals:
+    void scanProgress1(QString path);
+    void scanProgress2(QString path);
+
+    void scanFinished();
+    void allScansFinished();
 };
 
 #endif
