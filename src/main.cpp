@@ -1,10 +1,16 @@
 #include <ui/main_window.hpp>
 
+#include <config.hpp>
+
 #include <QApplication>
 
 #include <gbBase/Finally.hpp>
 #include <gbBase/Log.hpp>
 #include <gbBase/LogHandlers.hpp>
+
+#include <boost/filesystem.hpp>
+
+#include <fstream>
 
 int main(int argc, char* argv[])
 {
@@ -27,7 +33,20 @@ int main(int argc, char* argv[])
 
     GHULBUS_LOG(Info, "Dir Sync up and running.");
 
-    MainWindow main_window;
+    auto const exec_path = boost::filesystem::system_complete( boost::filesystem::path(argv[0]) ).parent_path();
+    auto const cfg_path = exec_path / "dir_sync.conf";
+    Config cfg = [cfg_path]() {
+        if(boost::filesystem::ifstream fin(cfg_path, std::ios_base::binary); fin) {
+            GHULBUS_LOG(Info, "Loading config from " << cfg_path << ".");
+            Config ret(fin);
+            return ret;
+        } else {
+            return Config();
+        }
+    }();
+    cfg.setConfigFilePath(cfg_path);
+
+    MainWindow main_window(cfg);
     main_window.show();
 
     return theApp.exec();

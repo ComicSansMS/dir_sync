@@ -23,13 +23,20 @@ if(QT5_BASE_DIR)
     list(APPEND CMAKE_PREFIX_PATH ${QT5_BASE_DIR})
 endif()
 find_package(Qt5Widgets REQUIRED)
-find_package(Boost REQUIRED)
+set(Boost_USE_STATIC_LIBS ON)
+find_package(Boost REQUIRED filesystem)
 find_package(gbBase REQUIRED)
 
 set(DIR_SYNC_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
 
 set(DIR_SYNC_SOURCE_FILES
     ${DIR_SYNC_SOURCE_DIR}/main.cpp
+    ${DIR_SYNC_SOURCE_DIR}/config.cpp
+)
+
+set(DIR_SYNC_HEADER_FILES
+    ${DIR_SYNC_SOURCE_DIR}/config.hpp
+    ${DIR_SYNC_SOURCE_DIR}/exceptions.hpp
 )
 
 set(DIR_SYNC_UI_DIR ${PROJECT_SOURCE_DIR}/src/ui)
@@ -46,12 +53,13 @@ source_group(moc FILES
 
 add_executable(dir_sync WIN32
     ${DIR_SYNC_SOURCE_FILES}
+    ${DIR_SYNC_HEADER_FILES}
     ${DIR_SYNC_QT_SOURCE_FILES}
     ${DIR_SYNC_QT_MOC_HEADER_FILES}
     ${DIR_SYNC_QT_MOC_SOURCE_FILES}
 )
 target_include_directories(dir_sync PUBLIC ${DIR_SYNC_SOURCE_DIR})
-target_link_libraries(dir_sync PUBLIC Qt5::Widgets Ghulbus::gbBase)
+target_link_libraries(dir_sync PUBLIC Qt5::Widgets Ghulbus::gbBase Boost::disable_autolinking Boost::filesystem)
 if(WIN32)
     target_link_libraries(dir_sync PUBLIC Qt5::WinMain)
 endif()
@@ -61,6 +69,7 @@ target_compile_options(dir_sync PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/permissive->)
 target_compile_options(dir_sync PRIVATE $<$<CXX_COMPILER_ID:GNU>:-Wall>)
 target_compile_options(dir_sync PRIVATE $<$<CXX_COMPILER_ID:GNU>:-pedantic>)
 target_compile_options(dir_sync PRIVATE $<$<CXX_COMPILER_ID:GNU>:-Wextra>)
+target_compile_definitions(dir_sync PRIVATE $<$<CXX_COMPILER_ID:MSVC>:_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS>)
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT dir_sync)
 
