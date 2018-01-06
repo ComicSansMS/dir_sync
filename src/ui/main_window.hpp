@@ -11,6 +11,7 @@
 #include <QCheckBox>
 #include <QLabel>
 #include <QLineEdit>
+#include <QListWidget>
 #include <QProgressBar>
 #include <QPushButton>
 #include <QStackedWidget>
@@ -57,6 +58,20 @@ private:
         Scanner(MainWindow* parent);
     } m_scanner;
 
+    struct Diff {
+        Directory dir1;
+        Directory dir2;
+
+        QWidget* widget;
+        QHBoxLayout* outerLayout;
+        QListWidget* list;
+
+        QVBoxLayout* buttonsLayout;
+        QPushButton* okButton;
+
+        Diff(MainWindow* parent);
+    } m_diff;
+
     ThreadPool m_threadPool;
 public:
     MainWindow(Config const& cfg);
@@ -74,7 +89,7 @@ signals:
     void scanProgress1(QString path);
     void scanProgress2(QString path);
 
-    void scanFinished();
+    void scanFinished(int idx);
     void allScansFinished();
 };
 
